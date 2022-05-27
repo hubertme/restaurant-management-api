@@ -14,7 +14,7 @@ export default class AppConfig {
     }
 
     static get envFilePath(): string {
-        const envPath = path.resolve(__dirname, `../envs/.${this.ENVS}.env`);
+        const envPath = path.resolve(__dirname, `../../envs/.${this.ENVS}.env`);
         return envPath;
     }
 
