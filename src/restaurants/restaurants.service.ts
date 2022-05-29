@@ -34,8 +34,8 @@ export class RestaurantsService {
     }
 
     async createNewRestaurant(request: CreateRestaurantRequest): Promise<Restaurant> {
-        const newResto = this.restoRepository.create();
-        const addr = this.addressRepository.create();
+        let newResto = this.restoRepository.create();
+        let addr = this.addressRepository.create();
         
         // Inject all data
         addr.addLine1 = request.addLine1;
@@ -47,12 +47,12 @@ export class RestaurantsService {
         addr.countryISO = EnumISOCountry.INDONESIA;
         addr.latitude = request.latitude;
         addr.longitude = request.longitude;
-        addr.save();
+        addr = await addr.save();
 
         newResto.businessName = request.businessName;
         newResto.legalName = request.legalName;
         newResto.address = addr;
-        newResto.save();
+        newResto = await newResto.save();
 
         return newResto;
     }
