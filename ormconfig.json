@@ -8,8 +8,8 @@
       "password": "testtist",
       "database": "restaurant-api-main",
       "entities": ["dist/**/*.entity{ .ts,.js}"],
-      "synchronize": true,
-      "migrations": ["migrations/*{.ts,.js}"],
+      "synchronize": false,
+      "migrations": ["src/migrations/*.js"],
       "migrationsTableName": "migrations_typeorm",
       "migrationsRun": true
     }
