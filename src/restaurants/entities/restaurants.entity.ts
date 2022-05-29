@@ -12,15 +12,16 @@ export default class Restaurant extends BaseEntity {
     @Column({name: 'legal_name'})
     legalName: string;
 
-    @OneToOne(type => RestaurantAddress, (address) => address.restaurant)
+    @OneToOne(() => RestaurantAddress, address => address.restaurant, {eager: true, onDelete: 'CASCADE'})
+    @JoinColumn()
     address: RestaurantAddress;
 
-    @CreateDateColumn()
+    @CreateDateColumn({name: 'created_at'})
     createdAt: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({name: 'updated_at'})
     updatedAt: Date;
 
-    @DeleteDateColumn()
+    @DeleteDateColumn({name: 'deleted_at'})
     deletedAt: Date;
 }

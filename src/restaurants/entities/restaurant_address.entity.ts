@@ -6,10 +6,6 @@ export default class RestaurantAddress extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToOne(type => Restaurant, restaurant => restaurant.address)
-    @JoinColumn()
-    restaurant: Restaurant;
-
     @Column({name: 'add_line_1'})
     addLine1: string;
 
@@ -28,7 +24,7 @@ export default class RestaurantAddress extends BaseEntity {
     @Column()
     province: string;
 
-    @Column({name: 'country'})
+    @Column({name: 'country_iso'})
     countryISO: string;
 
     @Column({type: 'float4'})
@@ -37,15 +33,15 @@ export default class RestaurantAddress extends BaseEntity {
     @Column({type: 'float4'})
     longitude: number;
 
-    @Column({default: false})
-    isActive: boolean;
-
-    @CreateDateColumn()
+    @CreateDateColumn({name: 'created_at'})
     createdAt: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({name: 'updated_at'})
     updatedAt: Date;
 
-    @DeleteDateColumn()
+    @DeleteDateColumn({name: 'deleted_at'})
     deletedAt: Date;
+
+    @OneToOne(() => Restaurant, restaurant => restaurant.address)
+    restaurant: Restaurant;
 }
