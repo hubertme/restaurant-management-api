@@ -15,8 +15,7 @@ import RestaurantOwner from './entities/restaurant_owner.entity';
       RestaurantAddress, 
       RestaurantOwner
     ]),
-  ]
+  ],
+  exports: [TypeOrmModule],
 })
-export class RestaurantsModule {
-  
-}
+export class RestaurantsModule {}

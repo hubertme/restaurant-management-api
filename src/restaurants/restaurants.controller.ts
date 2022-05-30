@@ -27,7 +27,7 @@ export class RestaurantsController {
     @Get('/:id')
     async getRestaurantById(@Req() req: Request, @Res() res: Response) {
         try {
-            const restoId = parseInt(req.params['id'] as string, 10);
+            const restoId = parseInt(req.params['id'] as string);
             const result = await this.restaurantsService.getSingleRestaurantById(restoId);
             res.status(HttpStatus.OK).json(
                 ServerResponse.Success(result),
