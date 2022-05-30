@@ -6,6 +6,7 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
 import AppConfig from './app_config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MenusModule } from './menus/menus.module';
+import { AccountsModule } from './accounts/accounts.module';
 
 @Module({
     imports: [
@@ -20,7 +21,8 @@ import { MenusModule } from './menus/menus.module';
         //     }),
         // }),
         RestaurantsModule,
-        MenusModule
+        MenusModule,
+        AccountsModule,
     ],
     controllers: [AppController],
     providers: [AppService],

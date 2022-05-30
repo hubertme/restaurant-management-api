@@ -1,3 +1,4 @@
+import Account from "src/accounts/entities/account.entity";
 import Menu from "src/menus/entities/menu.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import RestaurantAddress from "./restaurant_address.entity";
@@ -33,4 +34,8 @@ export default class Restaurant extends BaseEntity {
 
     @OneToMany(() => Menu, menu => menu.restaurant, {eager: true, onDelete: 'CASCADE'})
     menus: Menu[]
+
+    @OneToOne(() => Account, acc => acc.restaurant)
+    @JoinColumn()
+    account: Account;
 }
