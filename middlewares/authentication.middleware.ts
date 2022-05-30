@@ -55,6 +55,9 @@ export default class AuthenticateUserMiddleware implements NestMiddleware {
             return;
         }
 
+        // Save user to session
+        req.headers['x-account-id'] = `${accessTokens[0].account.id}`;
+
         next();
     }
 }

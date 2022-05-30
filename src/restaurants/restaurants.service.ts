@@ -6,6 +6,7 @@ import Restaurant from './entities/restaurants.entity';
 import { CreateRestaurantRequest } from './restaurants.models';
 import RestaurantAddress from './entities/restaurant_address.entity';
 import RestaurantOwner from './entities/restaurant_owner.entity';
+import Account from 'src/accounts/entities/account.entity';
 
 class ErrorMessage {
     static readonly NO_RESTAURANT_FOUND = 'err/restaurant/no-restaurant-found';
@@ -22,6 +23,9 @@ export class RestaurantsService {
 
         @InjectRepository(RestaurantOwner)
         private ownerRepository: Repository<RestaurantOwner>,
+
+        @InjectRepository(Account)
+        private accountRepo: Repository<Account>,
     ){}
 
     async getAllRestaurants(): Promise<Restaurant[]> {
@@ -37,10 +41,13 @@ export class RestaurantsService {
         return result[0];
     }
 
-    async createNewRestaurant(request: CreateRestaurantRequest): Promise<Restaurant> {
+    async createNewRestaurant(accountId: number, request: CreateRestaurantRequest): Promise<Restaurant> {
         let newResto = this.restoRepository.create();
         let addr = this.addressRepository.create();
         let owner = this.ownerRepository.create();
+
+        // Fetch account
+        const account = await this.accountRepo.findOne(accountId);
         
         // Inject address
         addr.addLine1 = request.addLine1;
@@ -63,6 +70,7 @@ export class RestaurantsService {
         newResto.legalName = request.legalName;
         newResto.address = addr;
         newResto.owner = owner;
+        newResto.account = account;
         newResto = await newResto.save();
 
         return newResto;

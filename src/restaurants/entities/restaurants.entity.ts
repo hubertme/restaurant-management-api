@@ -35,7 +35,7 @@ export default class Restaurant extends BaseEntity {
     @OneToMany(() => Menu, menu => menu.restaurant, {eager: true, onDelete: 'CASCADE'})
     menus: Menu[]
 
-    @OneToOne(() => Account, acc => acc.restaurant)
+    @OneToOne(() => Account, acc => acc.restaurant, {nullable: false})
     @JoinColumn()
     account: Account;
 }

@@ -43,7 +43,8 @@ export class RestaurantsController {
     async createNewRestaurant(@Req() req: Request, @Res() res: Response) {
         try {
             const request = CreateRestaurantRequest.fromJson(req.body);
-            const result = await this.restaurantsService.createNewRestaurant(request);
+            const accountId = parseInt(req.headers['x-account-id'] as string);
+            const result = await this.restaurantsService.createNewRestaurant(accountId, request);
             res.status(HttpStatus.CREATED).json(
                 ServerResponse.Success(result),
             );
