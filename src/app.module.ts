@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -7,6 +7,8 @@ import AppConfig from './app_config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MenusModule } from './menus/menus.module';
 import { AccountsModule } from './accounts/accounts.module';
+import { Connection } from 'typeorm';
+import AuthenticateUserMiddleware from 'middlewares/authentication.middleware';
 
 @Module({
     imports: [
@@ -27,4 +29,13 @@ import { AccountsModule } from './accounts/accounts.module';
     controllers: [AppController],
     providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule  {
+    constructor(private connection: Connection) {}
+
+    configure(consumer: MiddlewareConsumer) {
+		consumer.apply(AuthenticateUserMiddleware).forRoutes(
+            '/restaurants', 
+            '/menus',
+        );
+	}
+}
