@@ -1,7 +1,7 @@
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import Restaurant from "./restaurants.entity";
 
-@Entity()
+@Entity({name: 'restaurant_addresses'})
 export default class RestaurantAddress extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;

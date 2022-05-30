@@ -9,6 +9,8 @@ export class CreateRestaurantRequest {
     province: string;
     latitude: number;
     longitude: number;
+    ownerFName: string;
+    ownerLName: string;
 
     static fromJson(json: {[key: string]: any}): CreateRestaurantRequest {
         const base = new CreateRestaurantRequest();
@@ -23,6 +25,8 @@ export class CreateRestaurantRequest {
         base.province = json['province'];
         base.latitude = json['latitude'];
         base.longitude = json['longitude'];
+        base.ownerFName = json['owner_f_name'];
+        base.ownerLName = json['owner_l_name'];
 
         return base;
     }

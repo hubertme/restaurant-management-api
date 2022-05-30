@@ -1,7 +1,8 @@
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import RestaurantAddress from "./restaurant_address.entity";
+import RestaurantOwner from "./restaurant_owner.entity";
 
-@Entity()
+@Entity({name: 'restaurants'})
 export default class Restaurant extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
@@ -12,7 +13,7 @@ export default class Restaurant extends BaseEntity {
     @Column({name: 'legal_name'})
     legalName: string;
 
-    @OneToOne(() => RestaurantAddress, address => address.restaurant, {eager: true, onDelete: 'CASCADE'})
+    @OneToOne(() => RestaurantAddress, address => address.restaurant, {eager: true, onDelete: 'CASCADE', nullable: false})
     @JoinColumn()
     address: RestaurantAddress;
 
@@ -24,4 +25,8 @@ export default class Restaurant extends BaseEntity {
 
     @DeleteDateColumn({name: 'deleted_at'})
     deletedAt: Date;
+
+    @OneToOne(() => RestaurantOwner, owner => owner.restaurant, {eager: true, onDelete: 'CASCADE', nullable: false})
+    @JoinColumn()
+    owner: RestaurantOwner;
 }

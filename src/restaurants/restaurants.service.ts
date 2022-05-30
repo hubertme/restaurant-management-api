@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import Restaurant from './entities/restaurants.entity';
 import { CreateRestaurantRequest } from './restaurants.models';
 import RestaurantAddress from './entities/restaurant_address.entity';
+import RestaurantOwner from './entities/restaurant_owner.entity';
 
 class ErrorMessage {
     static readonly NO_RESTAURANT_FOUND = 'err/restaurant/no-restaurant-found';
@@ -18,6 +19,9 @@ export class RestaurantsService {
 
         @InjectRepository(Restaurant)
         private restoRepository: Repository<Restaurant>,
+
+        @InjectRepository(RestaurantOwner)
+        private ownerRepository: Repository<RestaurantOwner>,
     ){}
 
     async getAllRestaurants(): Promise<Restaurant[]> {
@@ -36,8 +40,9 @@ export class RestaurantsService {
     async createNewRestaurant(request: CreateRestaurantRequest): Promise<Restaurant> {
         let newResto = this.restoRepository.create();
         let addr = this.addressRepository.create();
+        let owner = this.ownerRepository.create();
         
-        // Inject all data
+        // Inject address
         addr.addLine1 = request.addLine1;
         addr.addLine2 = request.addLine2;
         addr.district = request.district;
@@ -49,9 +54,15 @@ export class RestaurantsService {
         addr.longitude = request.longitude;
         addr = await addr.save();
 
+        // Inject owner
+        owner.firstName = request.ownerFName;
+        owner.lastName = request.ownerLName;
+        owner = await owner.save();
+
         newResto.businessName = request.businessName;
         newResto.legalName = request.legalName;
         newResto.address = addr;
+        newResto.owner = owner;
         newResto = await newResto.save();
 
         return newResto;
