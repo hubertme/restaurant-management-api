@@ -21,5 +21,6 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/envs ./envs
 COPY --from=builder /app/ormconfig.json ./ormconfig.json
+COPY --from=builder /app/keys ./keys
 
 CMD ["node", "dist/src/main"]
