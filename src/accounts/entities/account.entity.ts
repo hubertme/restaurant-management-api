@@ -30,7 +30,7 @@ export default class Account extends BaseEntity {
     deletedAt: Date;
 
     @OneToOne(() => Restaurant, restaurant => restaurant.account)
-    restaurant: Restaurant;
+    restaurants: Restaurant[];
 
     @OneToMany(() => AccessToken, token => token.account, {onDelete: 'CASCADE'})
     tokens: AccessToken[];
