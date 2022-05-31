@@ -1,3 +1,4 @@
+import Account from "src/accounts/entities/account.entity";
 import Restaurant from "src/restaurants/entities/restaurants.entity";
 import { BaseEntity, Entity, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, UpdateDateColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 
@@ -30,7 +31,11 @@ export default class Menu extends BaseEntity {
     @DeleteDateColumn({name: 'deleted_at'})
     deletedAt: Date;
 
-    @ManyToOne(() => Restaurant, restaurant => restaurant.menus)
+    @ManyToOne(() => Restaurant, restaurant => restaurant.menus, {nullable: false})
     @JoinColumn()
     restaurant: Restaurant;
+
+    @ManyToOne(() => Account, account => account.menus, {nullable: false})
+    @JoinColumn()
+    account: Account;
 }

@@ -1,9 +1,8 @@
 import { HttpStatus, Injectable, NestMiddleware } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
-import { ErrorCodes } from "responses/codes";
 import ServerResponse from "responses/server_response";
 import AccessToken from "src/accounts/entities/access_token.entity";
-import { getConnection, getRepository, MoreThan } from "typeorm";
+import { getRepository, MoreThan } from "typeorm";
 import JWTUtil from "utils/jwt_util";
 
 class ErrorMessage {

@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import EnumISOCurrency from 'consts/enum/iso_currencies';
+import Account from 'src/accounts/entities/account.entity';
 import Restaurant from 'src/restaurants/entities/restaurants.entity';
 import { Repository } from 'typeorm';
+import CommonMethodUtil from 'utils/common_util';
 import Menu from './entities/menu.entity';
 
 class ErrorMessage {
@@ -17,17 +19,22 @@ export class MenusService {
 
         @InjectRepository(Restaurant)
         private restoRepo: Repository<Restaurant>,
+
+        @InjectRepository(Account)
+        private accountRepo: Repository<Account>,
     ) {}
 
-    async getAllMenus(): Promise<Menu[]> {
-        const menus = await this.menuRepo.find();
+    async getAllMenus(accountId: number, restoId: number): Promise<Menu[]> {
+        const restaurant = await CommonMethodUtil.getRestaurantById(accountId, restoId);
+
+        const menus = await this.menuRepo.find({where: {restaurant}});
         return menus;
     }
 
-    async addNewMenu(restoId: number, name: string, description: string, price: number): Promise<Menu> {
+    async addNewMenu(accountId: number, restoId: number, name: string, description: string, price: number): Promise<Menu> {
         // Get restaurant
-        const query = await this.restoRepo.findByIds([restoId]);
-        const resto = query[0];
+        const account = await this.accountRepo.findOne({where: {id: accountId}});
+        const restaurant = await CommonMethodUtil.getRestaurantById(account, restoId);
         
         // Inject menu
         let menu = this.menuRepo.create();
@@ -35,15 +42,17 @@ export class MenusService {
         menu.description = description;
         menu.price = price;
         menu.currency = EnumISOCurrency.IDR;
-        menu.restaurant = resto;
+        menu.restaurant = restaurant;
+        menu.account = account;
         menu = await menu.save();
         
         return menu;
     }
 
-    async toggleMenu(menuId: number, isActive: boolean) {
+    async toggleMenu(accountId: number, menuId: number, isActive: boolean) {
         // Get menu
-        const query = await this.menuRepo.findByIds([menuId]);
+        const account = await this.accountRepo.findOne({where: {id: accountId}})
+        const query = await this.menuRepo.find({where: {account, id: menuId}});
         if (query.length === 0) {
             throw ErrorMessage.NO_MENU_FOUND;
         }
@@ -60,9 +69,11 @@ export class MenusService {
 
     }
 
-    async deleteMenu(menuId: number) {
+    async deleteMenu(accountId: number, menuId: number) {
+        const account = await this.accountRepo.findOne({where: {id: accountId}})
+        
         // Get menu
-        const query = await this.menuRepo.findByIds([menuId]);
+        const query = await this.menuRepo.find({where: {account, id: menuId}});
         if (query.length === 0) {
             throw ErrorMessage.NO_MENU_FOUND;
         }
