@@ -51,7 +51,7 @@ export default class ServerResponse {
         )
     }
 
-    static GeneralError(data: any = null): ResponseModel {
+    static GeneralError(data: any = null, message: string = 'An error occurred'): ResponseModel {
         if (data instanceof Error) {
             data = {
                 error: {
@@ -64,7 +64,7 @@ export default class ServerResponse {
 
         return new ResponseModel(
             ErrorCodes.GENERAL_ERR,
-            'An error occurred',
+            message,
             data,
         )
     }

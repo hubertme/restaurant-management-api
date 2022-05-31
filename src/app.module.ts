@@ -9,6 +9,7 @@ import { MenusModule } from './menus/menus.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { Connection } from 'typeorm';
 import AuthenticateUserMiddleware from 'middlewares/authentication.middleware';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
     imports: [
@@ -25,6 +26,7 @@ import AuthenticateUserMiddleware from 'middlewares/authentication.middleware';
         RestaurantsModule,
         MenusModule,
         AccountsModule,
+        OrdersModule,
     ],
     controllers: [AppController],
     providers: [AppService],
@@ -36,6 +38,7 @@ export class AppModule implements NestModule  {
 		consumer.apply(AuthenticateUserMiddleware).forRoutes(
             '/restaurants', 
             '/menus',
+            '/orders'
         );
 	}
 }

@@ -1,5 +1,6 @@
 import Account from "src/accounts/entities/account.entity";
 import Menu from "src/menus/entities/menu.entity";
+import Order from "src/orders/entities/order.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import RestaurantAddress from "./restaurant_address.entity";
 import RestaurantOwner from "./restaurant_owner.entity";
@@ -38,4 +39,10 @@ export default class Restaurant extends BaseEntity {
     @ManyToOne(() => Account, acc => acc.restaurants, {nullable: false})
     @JoinColumn()
     account: Account;
+
+    @OneToMany(() => Order, order => order.restaurant)
+    orders: Order[];
+
+    @Column({name: 'service_charge_rate', default: 0, type: 'float4'})
+    serviceChargeRate: number;
 }

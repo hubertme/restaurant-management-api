@@ -4,6 +4,7 @@ import { getRepository } from "typeorm";
 
 class ErrorMessage {
     static readonly NO_RESTAURANT_FOUND = 'err/common/no-restaurant-found';
+    static readonly NO_ACCOUNT_FOUND = 'err/common/no-account-found';
 }
 
 export default class CommonMethodUtil {
@@ -19,8 +20,7 @@ export default class CommonMethodUtil {
     static async getRestaurantById(accountOrId: Account | number, restoId: number): Promise<Restaurant> {
         let account: Account;
         if (typeof accountOrId == "number") {
-            const accountRepo = getRepository(Account);
-            account = await accountRepo.findOne({where: {id: accountOrId}});
+            account = await this.getAccountById(accountOrId);
         } else {
             account = accountOrId;
         }
@@ -32,5 +32,16 @@ export default class CommonMethodUtil {
         }
 
         return restaurant;
+    }
+
+    static async getAccountById(accountId: number): Promise<Account> {
+        const accountRepo = getRepository(Account);
+        const account = await accountRepo.findOne({where: {id: accountId}});
+        
+        if (account == null) {
+            throw ErrorMessage.NO_ACCOUNT_FOUND;
+        }
+
+        return account;
     }
 }

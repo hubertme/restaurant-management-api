@@ -1,4 +1,5 @@
 import Menu from "src/menus/entities/menu.entity";
+import Order from "src/orders/entities/order.entity";
 import Restaurant from "src/restaurants/entities/restaurants.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import AccessToken from "./access_token.entity";
@@ -37,4 +38,7 @@ export default class Account extends BaseEntity {
 
     @OneToMany(() => Menu, menu => menu.account)
     menus: Menu[];
+
+    @OneToMany(() => Order, order => order.account)
+    orders: Order[];
 }

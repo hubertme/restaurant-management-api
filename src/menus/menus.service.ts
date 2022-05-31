@@ -79,7 +79,7 @@ export class MenusService {
         }
         let menu = query[0];
 
-        menu.deletedAt = new Date();
-        await menu.save();
+        // menu.deletedAt = new Date();
+        await menu.softRemove();
     }
 }
