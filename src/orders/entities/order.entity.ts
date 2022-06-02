@@ -2,6 +2,7 @@ import Account from "src/accounts/entities/account.entity";
 import Restaurant from "src/restaurants/entities/restaurants.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import OrderItem from "./order_item.entity";
+import OrderProgress from "./order_progress.entity";
 
 @Entity('orders')
 export default class Order extends BaseEntity {
@@ -51,4 +52,10 @@ export default class Order extends BaseEntity {
 
     @Column()
     channel: number;
+
+    @Column({name: 'finished_at', nullable: true})
+    finishedAt: Date;
+
+    @OneToMany(() => OrderProgress, e => e.order, {eager: true})
+    progressLog: OrderProgress[];
 }

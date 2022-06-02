@@ -11,7 +11,7 @@ export default class OrderItem extends BaseEntity {
     @JoinColumn()
     order: Order;
 
-    @ManyToOne(() => Menu, {nullable: false})
+    @ManyToOne(() => Menu, {eager: true, nullable: false})
     @JoinColumn()
     menu: Menu;
 

@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import ConstCalculationRates from 'consts/orders_enum/calculation_rates';
+import EnumOrderProgressStatus from 'consts/orders_enum/enum_order_progress_status';
 import Menu from 'src/menus/entities/menu.entity';
 import Restaurant from 'src/restaurants/entities/restaurants.entity';
 import { getConnection, Repository } from 'typeorm';
 import CommonMethodUtil from 'utils/common_util';
 import Order from './entities/order.entity';
 import OrderItem from './entities/order_item.entity';
+import OrderProgress from './entities/order_progress.entity';
 import { CreateOrderRequest } from './orders.models';
 
 class ErrorMessage {
@@ -14,6 +16,7 @@ class ErrorMessage {
     static readonly ORDER_EXIST = 'err/orders/order-exist';
     static readonly INVALID_MENU = 'err/orders/invalid-menu';
     static readonly INACTIVE_MENU = 'err/orders/inactive-menu';
+    static readonly ORDER_NOT_EXIST = 'err/orders/order-not-exist';
 }
 
 @Injectable()
@@ -30,6 +33,9 @@ export class OrdersService {
 
         @InjectRepository(OrderItem)
         private orderItemRepo: Repository<OrderItem>,
+
+        @InjectRepository(OrderProgress)
+        private orderProgressRepo: Repository<OrderProgress>,
     ) {}
 
     async getAllOrders(accountId: number): Promise<Order[]> {
@@ -46,13 +52,28 @@ export class OrdersService {
         return orders;
     }
 
+    async getSingleOrder(accountId: number, orderId: number): Promise<Order> {
+        const account = await CommonMethodUtil.getAccountById(accountId);
+        const order = await this.orderRepo.findOne({where: {id: orderId, account}});
+        if (order == null) {
+            throw ErrorMessage.ORDER_NOT_EXIST;
+        }
+        
+        return order;
+    }
+
     async cancelOrder(accountId: number, orderId: number) {
         const account = await CommonMethodUtil.getAccountById(accountId);
         const order = await this.orderRepo.findOne({where: {id: orderId, account}});
-
         if (order == null) {
             throw ErrorMessage.CANCELLED_ORDER;
         }
+
+        // Create new progression
+        const progress = this.orderProgressRepo.create();
+        progress.status = EnumOrderProgressStatus.CANCELLED;
+        progress.order = order;
+        progress.save();
 
         await order.softRemove();
     }
@@ -120,5 +141,32 @@ export class OrdersService {
         }
 
         return newOrder;
+    }
+
+    async progressOrder(accountId: number, orderId: number) {
+        const account = await CommonMethodUtil.getAccountById(accountId);
+        const order = await this.orderRepo.findOne({where: {id: orderId, account}});
+        if (order == null) {
+            throw ErrorMessage.ORDER_NOT_EXIST;
+        }
+
+        let newStatus: number;
+        if (order.progressLog.length === 0) {
+            newStatus = EnumOrderProgressStatus.PROGRESSION.at(0);
+        } else {
+            const current = order.progressLog.at(-1);
+            newStatus = EnumOrderProgressStatus.getNextProgression(current.status);
+        }
+
+        // Update finished_at
+        if (newStatus === EnumOrderProgressStatus.PROGRESSION.at(-1)) {
+            order.finishedAt = new Date();
+            await order.save();
+        }
+
+        const progress = this.orderProgressRepo.create();
+        progress.status = newStatus;
+        progress.order = order;
+        await progress.save();
     }
 }

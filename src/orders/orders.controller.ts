@@ -35,6 +35,23 @@ export class OrdersController {
         }
     }
 
+    @Get('/:id')
+    async getSingleOrder(@Req() req: Request, @Res() res: Response) {
+        try {
+            const accountId = parseInt(req.headers['x-account-id'] as string);
+            const orderId = parseInt(req.params['id'] as string);
+
+            const result = await this.ordersService.getSingleOrder(accountId, orderId);
+            res.status(HttpStatus.OK).json(
+                ServerResponse.Success(result),
+            );
+        } catch (e) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
+                ServerResponse.GeneralError(e),
+            );
+        }
+    }
+
     @Post()
     async createNewOrder(@Req() req: Request, @Res() res: Response) {
         try {
@@ -63,9 +80,26 @@ export class OrdersController {
     async cancelOrder(@Req() req: Request, @Res() res: Response) {
         try {
             const accountId = parseInt(req.headers['x-account-id'] as string);
-            const menuId = parseInt(req.params['id'] as string);
+            const orderId = parseInt(req.params['id'] as string);
 
-            await this.ordersService.cancelOrder(accountId, menuId);
+            await this.ordersService.cancelOrder(accountId, orderId);
+            res.status(HttpStatus.OK).json(
+                ServerResponse.Success(null),
+            );
+        } catch (e) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
+                ServerResponse.GeneralError(e),
+            );
+        }
+    }
+
+    @Post('/:id/progress')
+    async progressOrder(@Req() req: Request, @Res() res: Response) {
+        try {
+            const accountId = parseInt(req.headers['x-account-id'] as string);
+            const orderId = parseInt(req.params['id'] as string);
+
+            await this.ordersService.progressOrder(accountId, orderId);
             res.status(HttpStatus.OK).json(
                 ServerResponse.Success(null),
             );
